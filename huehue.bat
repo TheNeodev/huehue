@@ -1,24 +1,31 @@
 @echo off
-:: Check for internet connection
-ping -n 1 google.com >nul 2>&1 || (mshta vbscript:msgbox("Hey! Connect to the internet first :(",16,"No Internet")(window.close) & exit)
+setlocal enabledelayedexpansion
 
-:: Create Notepad script
-echo Set objFSO = CreateObject("Scripting.FileSystemObject") > script.vbs
-echo Set objFile = objFSO.CreateTextFile("notepad_text.vbs", True) >> script.vbs
-echo objFile.WriteLine "Set WshShell = CreateObject(""WScript.Shell"")" >> script.vbs
-echo objFile.WriteLine "WshShell.Run ""notepad""" >> script.vbs
-echo objFile.WriteLine "WScript.Sleep 500" >> script.vbs
-echo objFile.WriteLine "WshShell.SendKeys ""haha, corngatulations, i hacked ur computer, now watch this: https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9""" >> script.vbs
-echo objFile.WriteLine "WshShell.SendKeys ""{ENTER}""" >> script.vbs
-echo objFile.Close >> script.vbs
+:: Internet Connection Check
+ping 8.8.8.8 -n 1 -w 1000 > nul
+if %errorlevel% neq 0 (
+    call :show_error "hey! connect to internet first :("
+    exit /b
+)
 
-:: Run the Notepad script
-cscript //nologo script.vbs
+:: Open Notepad and inject text
+start notepad.exe
+timeout /t 1 > nul
 
-:: Open the link automatically
+:: Create VBS script to type text
+echo Set WshShell = WScript.CreateObject("WScript.Shell") > "%temp%\type.vbs"
+echo WshShell.AppActivate "Notepad" >> "%temp%\type.vbs"
+echo WScript.Sleep 300 >> "%temp%\type.vbs"
+echo WshShell.SendKeys "haha, corngatulations, i hacked ur computer, now watch this: https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9" >> "%temp%\type.vbs"
+cscript //nologo "%temp%\type.vbs"
+del "%temp%\type.vbs"
+
+:: Open YouTube link
 start "" "https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9"
+exit /b
 
-:: Clean up
-del script.vbs
-del notepad_text.vbs
-exit
+:show_error
+echo MsgBox %~1, vbCritical, "Error" > "%temp%\error.vbs"
+cscript //nologo "%temp%\error.vbs"
+del "%temp%\error.vbs"
+exit /b
