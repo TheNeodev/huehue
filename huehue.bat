@@ -1,22 +1,28 @@
 @echo off
-REM --- Check for Internet connectivity by pinging google.com ---
+:: Check internet connection
 ping -n 1 google.com >nul 2>&1
-if errorlevel 1 (
-    REM --- No Internet: show a message box using MSHTA and exit ---
-    mshta "javascript:alert('hey! connect to internet first :(');close();"
-    exit /b
+if %errorlevel% neq 0 (
+    echo x=msgbox("Hey! Connect to internet first :(", 0+16, "No Internet") > "%temp%\msg.vbs"
+    start /min "%temp%\msg.vbs"
+    timeout /t 2 >nul
+    del "%temp%\msg.vbs"
+    exit
 )
 
-REM --- Internet is available ---
+:: Create Notepad script
+echo Set objFSO = CreateObject("Scripting.FileSystemObject") > "%temp%\prank.vbs"
+echo Set objFile = objFSO.CreateTextFile("%temp%\prank.txt", True) >> "%temp%\prank.vbs"
+echo objFile.WriteLine "haha, corngatulations, i own ur computer, now watch this: https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9" >> "%temp%\prank.vbs"
+echo objFile.Close >> "%temp%\prank.vbs"
+echo Set objShell = CreateObject("WScript.Shell") >> "%temp%\prank.vbs"
+echo objShell.Run "notepad.exe %temp%\prank.txt" >> "%temp%\prank.vbs"
 
-REM --- Create a temporary file with the prank message ---
-set "tempFile=%temp%\prank_message.txt"
-echo haha, corngatulations, i hacked ur computer, now watch this: https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9> "%tempFile%"
+:: Execute Notepad script
+cscript //nologo "%temp%\prank.vbs"
 
-REM --- Open Notepad to display the message ---
-start notepad "%tempFile%"
-
-REM --- Automatically launch the URL in the default web browser ---
+:: Open the link
 start "" "https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9"
 
-exit
+:: Clean up
+timeout /t 3 >nul
+del "%temp%\prank.vbs"
