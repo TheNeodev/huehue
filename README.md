@@ -67,4 +67,4 @@ Developed by [TheNeodev](https://github.com/TheNeodev).
 
 ---
 
-This README provides a clear explanation of what the prank file does, how to use it, and the necessary warnings and licensing details. You can customize further if additional details or instructions become necessary.
+readme by gpt o3-mini
