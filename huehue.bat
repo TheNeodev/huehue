@@ -1,31 +1,78 @@
 @echo off
 setlocal enabledelayedexpansion
+mode con: cols=90 lines=30
+color 0a
+title [̲̅C][̲̅Y][̲̅B][̲̅E][̲̅R] [̲̅V][̲̅I][̲̅R][̲̅T][̲̅U][̲̅A][̲̅L] [̲̅I][̲̅N][̲̅F][̲̅E][̲̅C][̲̅T][̲̅I][̲̅O][̲̅N] [̲̅S][̲̅Y][̲̅S][̲̅T][̲̅E][̲̅M]
 
-:: Internet Connection Check
-ping 8.8.8.8 -n 1 -w 1000 > nul
-if %errorlevel% neq 0 (
-    call :show_error "hey! connect to internet first :("
+:: ASCII Art Header
+echo.
+echo  █▀▀ █▀▀ █▀▀ ▀█▀   ▀█▀ █░█ █▀▀   █▀▀ █▄░█ ▀█▀ █▀▀ █▀█ █▀▀ █▀▄
+echo  █▄▄ ██▄ █▀░ ░█░   ░█░ █▀█ ██▄   ██▄ █░▀█ ░█░ ██▄ █▀▄ ██▄ █▄▀
+echo.
+
+:: Fake Security Scan
+call :color_progress "Initializing System Scan..." 0a
+for /l %%i in (1,1,10) do (
+    set /a progress=%%i*10
+    echo [SCAN] !progress!%% Complete - ^(Phase %%i/10^)
+    ping -n 2 127.0.0.1 >nul
+)
+call :color_progress "Security Protocols Bypassed" c0
+
+:: Network Check Theater
+call :color_progress "Establishing Darknet Connection..." 0a
+ping 8.8.8.8 -n 3 -w 1000 > nul || (
+    call :cyber_error "CONNECTION TERMINATED - NO INTERNET"
     exit /b
 )
 
-:: Open Notepad and inject text
+:: Meme Injection Sequence
+call :color_progress "Deploying Payload..." 0a
 start notepad.exe
-timeout /t 1 > nul
+timeout /t 2 > nul
 
-:: Create VBS script to type text
-echo Set WshShell = WScript.CreateObject("WScript.Shell") > "%temp%\type.vbs"
-echo WshShell.AppActivate "Notepad" >> "%temp%\type.vbs"
-echo WScript.Sleep 300 >> "%temp%\type.vbs"
-echo WshShell.SendKeys "haha, corngatulations, i hacked ur computer, now watch this: https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9" >> "%temp%\type.vbs"
-cscript //nologo "%temp%\type.vbs"
-del "%temp%\type.vbs"
+(
+echo Set oWS = CreateObject("WScript.Shell"^)
+echo oWS.AppActivate "Notepad"
+echo WScript.Sleep 500
+echo oWS.SendKeys "INITIATING MEME PROTOCOL...{ENTER}"
+echo WScript.Sleep 300
+echo oWS.SendKeys "{ENTER}[̲̅S][̲̅Y][̲̅S][̲̅T][̲̅E][̲̅M] [̲̅C][̲̅O][̲̅M][̲̅P][̲̅R][̲̅O][̲̅M][̲̅I][̲̅S][̲̅E][̲̅D]^{ENTER}"
+echo WScript.Sleep 300
+echo oWS.SendKeys "{ENTER}CRITICAL ERROR: C:\\Windows\\System32\\dank_memes.dll^{ENTER}"
+echo WScript.Sleep 1000
+echo oWS.SendKeys "{ENTER}REMEDY: Watch this -> https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9^{ENTER}"
+) > "%temp%\hack.vbs"
 
-:: Open YouTube link
+cscript //nologo "%temp%\hack.vbs"
+del "%temp%\hack.vbs"
+
+:: Multimedia Activation
+call :color_progress "Activating Cyber-Tunes..." 0a
 start "" "https://youtu.be/xzJn0zdwuoM?si=m3Qgd-ayiXWqlVV9"
+timeout /t 5 > nul
+
+:: Clean Exit
+call :color_progress "Returning to Shadows..." 0a
+timeout /t 3 > nul
+exit
+
+:cyber_error
+echo.
+echo ░█▄█░█▀█░█▀▄░█░█░█▀▀░▀█▀░█▀█░█▀▄
+echo ░█░█░█░█░█▀▄░█░█░█▀▀░░█░░█░█░█▀▄
+echo ░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀░▀
+echo.
+echo MsgBox "CYBER FAILURE: %~1", vbCritical+vbSystemModal, "[̲̅C][̲̅R][̲̅I][̲̅T][̲̅I][̲̅C][̲̅A][̲̅L] [̲̅E][̲̅R][̲̅R][̲̅O][̲̅R]" > "%temp%\err.vbs"
+cscript //nologo "%temp%\err.vbs"
+del "%temp%\err.vbs"
 exit /b
 
-:show_error
-echo MsgBox %~1, vbCritical, "Error" > "%temp%\error.vbs"
-cscript //nologo "%temp%\error.vbs"
-del "%temp%\error.vbs"
+:color_progress
+echo.
+echo ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+<nul set /p "=◼"
+color %2
+echo %~1
+color 0a
 exit /b
